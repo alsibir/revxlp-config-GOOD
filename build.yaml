@@ -1,0 +1,15 @@
+include:
+  - board: xiao_ble//zmk
+    shield: revxlp
+    artifact-name: revxlp_xiao_ble
+
+  - board: xiao_ble//zmk
+    shield: revxlp
+    snippet: studio-rpc-usb-uart
+    cmake-args: -DCONFIG_ZMK_STUDIO=y
+    artifact-name: revxlp_xiao_ble_studio
+
+  - board: xiao_ble//zmk
+    shield: settings_reset
+    artifact-name: settings_reset_xiao_ble
+

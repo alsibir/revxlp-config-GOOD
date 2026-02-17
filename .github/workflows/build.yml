@@ -1,0 +1,93 @@
+# on: [push, pull_request, workflow_dispatch]
+
+# jobs:
+#  build:
+#    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
+
+name: Build (xiao_ble//zmk, revxlp)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    name: Verify build matrix and board naming
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install validation dependencies
+        run: |
+          python -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install --upgrade pyyaml
+
+      - name: Validate build.yaml
+        run: |
+          set -euo pipefail
+          . .venv/bin/activate
+          python - <<'PY'
+          import sys
+          from pathlib import Path
+
+          import yaml
+
+          p = Path("build.yaml")
+          if not p.exists():
+              print("ERROR: build.yaml not found", file=sys.stderr)
+              sys.exit(2)
+
+          data = yaml.safe_load(p.read_text(encoding="utf-8"))
+          include = (data or {}).get("include", [])
+          if not isinstance(include, list) or not include:
+              print("ERROR: build.yaml must contain non-empty top-level 'include' list", file=sys.stderr)
+              sys.exit(2)
+
+          allowed_board = "xiao_ble//zmk"
+          allowed_shields = {"revxlp", "settings_reset"}
+
+          for i, item in enumerate(include, start=1):
+              if not isinstance(item, dict):
+                  print(f"ERROR: include[{i}] must be a mapping", file=sys.stderr)
+                  sys.exit(2)
+
+              board = item.get("board")
+              shield = item.get("shield")
+
+              if board != allowed_board:
+                  print(f"ERROR: include[{i}].board must be '{allowed_board}', got: {board!r}", file=sys.stderr)
+                  sys.exit(2)
+
+              if shield not in allowed_shields:
+                  print(f"ERROR: include[{i}].shield must be one of {sorted(allowed_shields)}, got: {shield!r}", file=sys.stderr)
+                  sys.exit(2)
+
+          print("OK: build.yaml include matrix is restricted to xiao_ble//zmk and expected shields.")
+          PY
+
+      - name: Check for obsolete board names in repo (excluding this workflow)
+        run: |
+          set -euo pipefail
+          if grep -RIn \
+            --exclude-dir=.git \
+            --exclude='.github/workflows/build.yml' \
+            -E 'seeeduino_xiao_ble|seeeduino_xiao([^_]|$)' .; then
+            echo "ERROR: Found obsolete board name(s) (seeeduino_xiao_ble / seeeduino_xiao) in repository files."
+            exit 2
+          fi
+          echo "OK: No obsolete board names found (outside this workflow)."
+
+  build:
+    name: Build firmware
+    needs: verify
+    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
+
