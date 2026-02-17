@@ -38,7 +38,6 @@ jobs:
           python - <<'PY'
           import sys
           from pathlib import Path
-
           import yaml
 
           p = Path("build.yaml")
@@ -74,20 +73,25 @@ jobs:
           print("OK: build.yaml include matrix is restricted to xiao_ble//zmk and expected shields.")
           PY
 
-      - name: Check for obsolete board names in repo (excluding this workflow)
+      - name: Check for obsolete board names in repo
         run: |
           set -euo pipefail
+
+          # Формирование шаблона поиска без явного присутствия устаревших имён в тексте workflow.
+          obsolete_re='seeed''uino_xiao_ble|seeed''uino_xiao([^_]|$)'
+
           if grep -RIn \
             --exclude-dir=.git \
-            --exclude='.github/workflows/build.yml' \
-            -E 'seeeduino_xiao_ble|seeeduino_xiao([^_]|$)' .; then
-            echo "ERROR: Found obsolete board name(s) (seeeduino_xiao_ble / seeeduino_xiao) in repository files."
+            --exclude-dir=build \
+            --exclude='build.yml' \
+            -E "${obsolete_re}" .; then
+            echo "ERROR: Found obsolete board name(s) (seeed""uino_xiao_ble / seeed""uino_xiao) in repository files."
             exit 2
           fi
-          echo "OK: No obsolete board names found (outside this workflow)."
+
+          echo "OK: No obsolete board names found."
 
   build:
     name: Build firmware
     needs: verify
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
-
