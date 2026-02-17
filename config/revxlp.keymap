@@ -98,6 +98,10 @@
         };
     };
 
+
+#define QWERTY_BASE
+
+
     keymap {
         compatible = "zmk,keymap";
 
