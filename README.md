@@ -11,7 +11,7 @@
 - Плата (board): `xiao_ble//zmk`
 - Shield: `revxlp`, `settings_reset`
 
-В репозитории предусмотрена проверка на отсутствие устаревших обозначений плат (например, `seeeduino_xiao_ble`, `seeeduino_xiao`) во всех файлах проекта.
+В репозитории предусмотрена проверка на отсутствие устаревших обозначений плат (например, `seeeduino _xiao_ble`, `seeeduino _xiao`) во всех файлах проекта.
 
 ## 3 Краткое описание аппаратной конфигурации
 - Контроллер: Seeed Studio XIAO BLE (nRF52840).
@@ -91,7 +91,7 @@ west build -s zmk/app -d build/settings_reset -b xiao_ble//zmk -- \
 
 ```bash
 grep -RIn --exclude-dir=.git --exclude-dir=build \
-  -E 'seeeduino_xiao_ble|seeeduino_xiao([^_]|$)' .
+  -E 'seeeduino _xiao_ble|seeeduino _xiao([^_]|$)' .
 ```
 
 Также рекомендуется контролировать отсутствие устаревших/неопределённых Kconfig-символов в `config/*.conf` перед отправкой изменений.
