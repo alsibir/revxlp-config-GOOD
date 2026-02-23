@@ -98,7 +98,7 @@
         };
     };
 
-
+//  Чтобы генерировать прошивку Colemak закомментируйте следующцю строку, иначе будет генерироваться Qwerty
 #define QWERTY_BASE
 
 
@@ -109,20 +109,32 @@
         qwerty_layer {
             display-name = "Base";
             bindings = <
-                &kp ESC         &kp Q         &kp W         &kp E         &kp R          &kp T          &kp Y          &kp U          &kp I          &kp O          &kp P          &kp BSLH
-                &mt LCTRL TAB   &kp A         &kp S         &kp D         &kp F          &kp G          &kp H          &kp J          &kp K          &kp L          &kp SEMI       &kp SQT
-                &kp LSHFT       &kp Z         &kp X         &kp C         &kp V          &kp B          &kp N          &kp M          &kp COMMA      &kp DOT        &kp FSLH       &mt RALT GRAVE
-                                              &kp LGUI      &mo NUM_L     &lt NAV_L RET  &kp SPACE      &kp BSPC       &shifty
-            >;
+//             ╭───────────────┬─────────────┬─────────────┬─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬─────────────╮
+                &kp ESC         &kp Q         &kp W         &kp E         &kp R          &kp T             &kp Y          &kp U          &kp I          &kp O          &kp P          &kp BSLH
+//             ├───────────────┼─────────────┼─────────────┼─────────────┼──────────────┼─────────────┤   ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼─────────────┤
+                &mt LCTRL TAB   &kp A         &kp S         &kp D         &kp F          &kp G             &kp H          &kp J          &kp K          &kp L          &kp SEMI       &kp SQT
+//             ├───────────────┼─────────────┼─────────────┼─────────────┼──────────────┼─────────────┤   ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼─────────────┤
+                &kp LSHFT       &kp Z         &kp X         &kp C         &kp V          &kp B             &kp N          &kp M          &kp COMMA      &kp DOT        &kp FSLH       &mt RALT GRAVE
+//             ╰───────────────┴─────────────┴─────────────┴─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴─────────────╯
+//                                                         ╭─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────╮
+                                                            &kp LGUI      &mo NUM_L      &lt NAV_L RET     &kp SPACE      &kp BSPC       &shifty
+//                                                         ╰─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────╯
+            >; 
         };
 #else
         colemak_dhm_layer {
             display-name = "Base";
             bindings = <
-                &kp ESC         &kp Q         &kp W         &kp F         &kp P          &kp B          &kp J          &kp L          &kp U          &kp Y          &kp SQT        &kp BSLH
-                &mt LCTRL TAB   &kp A         &kp R         &kp S         &kp T          &kp G          &kp M          &kp N          &kp E          &kp I          &kp O          &kp SEMI
-                &kp LSHFT       &kp Z         &kp X         &kp C         &kp D          &kp V          &kp K          &kp H          &kp COMMA      &kp DOT        &kp FSLH       &mt RALT GRAVE
-                                              &studio_unlock &mo NUM_L     &lt NAV_L RET  &kp SPACE      &kp BSPC       &shifty
+//             ╭───────────────┬─────────────┬─────────────┬─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬─────────────╮
+                &kp ESC         &kp Q         &kp W         &kp F         &kp P          &kp B             &kp J          &kp L          &kp U          &kp Y          &kp SQT        &kp BSLH
+//             ├───────────────┼─────────────┼─────────────┼─────────────┼──────────────┼─────────────┤   ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼─────────────┤
+                &mt LCTRL TAB   &kp A         &kp R         &kp S         &kp T          &kp G             &kp M          &kp N          &kp E          &kp I          &kp O          &kp SEMI
+//             ├───────────────┼─────────────┼─────────────┼─────────────┼──────────────┼─────────────┤   ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼─────────────┤
+                &kp LSHFT       &kp Z         &kp X         &kp C         &kp D          &kp V             &kp K          &kp H          &kp COMMA      &kp DOT        &kp FSLH       &mt RALT GRAVE
+//             ╰───────────────┴─────────────┴─────────────┴─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴─────────────╯
+//                                                         ╭─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────╮
+                                                            &studio_unlock &mo NUM_L     &lt NAV_L RET     &kp SPACE      &kp BSPC       &shifty
+//                                                         ╰─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────╯
             >;
         };
 #endif
@@ -130,40 +142,64 @@
         nav_layer {
             display-name = "Nav";
             bindings = <
-                &kp LG(LS(N4))  &trans        &kp PG_UP     &kp UP_ARROW  &kp PG_DN      &kp HOME       &kp CARET      &kp PG_UP      &kp UP_ARROW   &kp PG_DN      &kp HOME       &kp LG(LS(N4))
-                &trans          &trans        &kp LEFT_ARROW &kp DOWN_ARROW &kp RIGHT_ARROW &kp END       &kp MINUS      &kp LEFT_ARROW  &kp DOWN_ARROW &kp RIGHT_ARROW &kp END        &trans
-                &out OUT_TOG    &trans        &trans        &trans        &kp LC(LEFT_ARROW) &kp LC(RIGHT_ARROW) &kp LC(LEFT_ARROW) &kp LC(RIGHT_ARROW) &trans &trans &trans &out OUT_TOG
-                                               &kp LGUI      &mo MED_L     &trans         &trans         &trans         &trans
+//             ╭───────────────┬─────────────┬─────────────┬─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬─────────────╮
+                &kp LG(LS(N4))  &trans        &kp PG_UP     &kp UP_ARROW  &kp PG_DN      &kp HOME          &kp CARET      &kp PG_UP      &kp UP_ARROW   &kp PG_DN      &kp HOME       &kp LG(LS(N4))
+//             ├───────────────┼─────────────┼─────────────┼─────────────┼──────────────┼─────────────┤   ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼─────────────┤
+                &trans          &trans        &kp LEFT_ARROW &kp DOWN_ARROW &kp RIGHT_ARROW &kp END        &kp MINUS      &kp LEFT_ARROW  &kp DOWN_ARROW &kp RIGHT_ARROW &kp END       &trans
+//             ├───────────────┼─────────────┼─────────────┼─────────────┼──────────────┼─────────────┤   ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼─────────────┤
+                &out OUT_TOG    &trans        &trans        &trans      &kp LC(LEFT_ARROW) &kp LC(RIGHT_ARROW) &kp LC(LEFT_ARROW) &kp LC(RIGHT_ARROW) &trans &trans    &trans         &out OUT_TOG
+//             ╰───────────────┴─────────────┴─────────────┴─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴─────────────╯
+//                                                         ╭─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────╮
+                                                            &kp LGUI      &mo MED_L      &trans            &trans         &trans         &trans
+//                                                         ╰─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────╯
             >;
         };
 
         num_layer {
             display-name = "Num";
             bindings = <
-                &kp ESC         &kp N1        &kp N2        &kp N3        &kp N4         &kp N5         &kp N6         &kp N7         &kp N8         &kp N9         &kp N0         &kp GRAVE
-                &trans          &kp EXCL      &kp AT        &kp HASH      &kp DLLR       &kp PRCNT      &kp CARET      &kp AMPS       &kp KP_MULTIPLY &kp LPAR       &kp RPAR       &kp COLON
-                &kp LSHFT       &kp N1        &kp KP_PLUS   &kp KP_MINUS  &kp LBRC       &kp LBKT       &kp RBKT       &kp RBRC       &kp KP_EQUAL    &kp UNDER      &trans         &trans
-                                               &kp LGUI      &trans        &mo MED_L      &kp KP_N1      &kp KP_N2      &kp KP_N3
+//             ╭───────────────┬─────────────┬─────────────┬─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬─────────────╮
+                &kp ESC         &kp N1        &kp N2        &kp N3        &kp N4         &kp N5            &kp N6         &kp N7         &kp N8         &kp N9         &kp N0         &kp GRAVE
+//             ├───────────────┼─────────────┼─────────────┼─────────────┼──────────────┼─────────────┤   ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼─────────────┤
+                &trans          &kp EXCL      &kp AT        &kp HASH      &kp DLLR       &kp PRCNT         &kp CARET      &kp AMPS       &kp KP_MULTIPLY &kp LPAR       &kp RPAR       &kp COLON
+//             ├───────────────┼─────────────┼─────────────┼─────────────┼──────────────┼─────────────┤   ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼─────────────┤
+                &kp LSHFT       &kp N1        &kp KP_PLUS   &kp KP_MINUS  &kp LBRC       &kp LBKT          &kp RBKT       &kp RBRC       &kp KP_EQUAL    &kp UNDER      &trans         &trans
+//             ╰───────────────┴─────────────┴─────────────┴─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴─────────────╯
+//                                                         ╭─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────╮
+                                                            &kp LGUI      &trans         &mo MED_L         &kp KP_N1      &kp KP_N2      &kp KP_N3
+//                                                         ╰─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────╯
             >;
         };
 
         media_layer {
             display-name = "Adjust";
             bindings = <
-                &sys_reset      &trans        &trans        &trans        &trans         &trans         &kp C_VOL_UP   &trans         &trans         &trans         &trans         &sys_reset
-                &bt BT_CLR      &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3   &bt BT_SEL 4   &kp C_VOL_DN   &trans         &trans         &trans         &trans         &trans
-                &trans          &trans        &trans        &trans        &trans         &trans         &trans         &trans         &trans         &trans         &trans         &bootloader
-                                               &trans        &trans        &mo FUN_L      &trans         &trans         &trans
+//             ╭───────────────┬─────────────┬─────────────┬─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬─────────────╮
+                &sys_reset      &trans        &trans        &trans        &trans         &trans            &kp C_VOL_UP   &trans         &trans         &trans         &trans         &sys_reset
+//             ├───────────────┼─────────────┼─────────────┼─────────────┼──────────────┼─────────────┤   ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼─────────────┤
+                &bt BT_CLR      &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3   &bt BT_SEL 4      &kp C_VOL_DN   &trans         &trans         &trans         &trans         &trans
+//             ├───────────────┼─────────────┼─────────────┼─────────────┼──────────────┼─────────────┤   ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼─────────────┤
+                &trans          &trans        &trans        &trans        &trans         &trans            &trans         &trans         &trans         &trans         &trans         &bootloader
+//             ╰───────────────┴─────────────┴─────────────┴─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴─────────────╯
+//                                                         ╭─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────╮
+                                                            &trans        &trans         &mo FUN_L         &trans         &trans         &trans
+//                                                         ╰─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────╯
             >;
         };
 
         fun_layer {
             display-name = "Media";
             bindings = <
-                &trans          &trans        &trans        &trans        &trans         &trans         &trans         &kp C_PREV     &kp C_VOL_DN   &kp C_VOL_UP   &kp C_NEXT     &trans
-                &trans          &trans        &trans        &trans        &trans         &trans         &trans         &trans         &trans         &trans         &trans         &trans
-                &trans          &trans        &trans        &trans        &trans         &trans         &trans         &trans         &kp C_PLAY_PAUSE &kp C_MUTE    &trans         &trans
-                                               &trans        &trans        &trans         &trans         &trans         &trans
+//             ╭───────────────┬─────────────┬─────────────┬─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬─────────────╮
+                &trans          &trans        &trans        &trans        &trans         &trans            &trans         &kp C_PREV     &kp C_VOL_DN   &kp C_VOL_UP   &kp C_NEXT     &trans
+//             ├───────────────┼─────────────┼─────────────┼─────────────┼──────────────┼─────────────┤   ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼─────────────┤
+                &trans          &trans        &trans        &trans        &trans         &trans            &trans         &trans         &trans         &trans         &trans         &trans
+//             ├───────────────┼─────────────┼─────────────┼─────────────┼──────────────┼─────────────┤   ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼─────────────┤
+                &trans          &trans        &trans        &trans        &trans         &trans            &trans         &trans         &kp C_PLAY_PAUSE &kp C_MUTE    &trans         &trans
+//             ╰───────────────┴─────────────┴─────────────┴─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴─────────────╯
+//                                                         ╭─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────╮
+                                                             &trans        &trans        &trans            &trans         &trans         &trans
+//                                                         ╰─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────╯
             >;
         };
 
