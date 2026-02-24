@@ -1,0 +1,30 @@
+name: bot-commit
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Create marker change
+        run: |
+          mkdir -p .github
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > .github/github-actions-bot-marker.txt
+
+      - name: Commit and push
+        run: |
+          git add .github/github-actions-bot-marker.txt
+          git commit -m "chore: bot marker update" || exit 0
+          git push
