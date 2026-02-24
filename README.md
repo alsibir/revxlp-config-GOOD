@@ -98,8 +98,72 @@ grep -RIn --exclude-dir=.git --exclude-dir=build \
 
 ## 10 Источники
 
-https://github.com/petejohanson/revxlp-config
-https://github.com/devpew/revxlp-config
-https://nickcoutsos.github.io/keymap-editor/
+1. `https://github.com/petejohanson/revxlp-config`
+   Назначение: эталонный (референсный) репозиторий конфигурации ZMK для проекта revxlp; используется как источник примеров структуры пользовательской конфигурации, подходов к организации слоёв, биндингов и сопутствующих файлов.
 
+2. `https://github.com/devpew/revxlp-config`
+   Назначение: исходные материалы (донорская конфигурация), на основе которых выполнена адаптация текущего репозитория; используется для сопоставления изменений, переноса элементов раскладки и проверки совместимости.
 
+3. `https://nickcoutsos.github.io/keymap-editor/`
+   Назначение: веб-инструмент Keymap Editor для визуального редактирования раскладок ZMK и сохранения изменений в репозиторий через GitHub-интеграцию. ([nickcoutsos.github.io][1])
+
+4. `https://github.com/nickcoutsos/keymap-editor/wiki/Limitations-of-the-Keymap-Editor`
+   Назначение: ограничения парсинга Keymap Editor, требования к структуре репозитория ZMK user config и правила подготовки layout-описаний (в т.ч. `config/info.json`) для корректного отображения раскладки. ([GitHub][2])
+
+5. `https://github.com/caksoylar/keymap-drawer`
+   Назначение: инструмент keymap-drawer для генерации статических изображений слоёв и схем раскладки на основе описания keymap; применяется для подготовки иллюстраций в документации.
+
+6. `https://zmk.dev/docs/`
+   Назначение: официальная документация ZMK (общее описание возможностей, структура конфигурации, навигация по разделам). ([zmk.dev][3])
+
+7. `https://zmk.dev/docs/keymaps`
+   Назначение: базовые принципы описания раскладок ZMK (devicetree keymap), структура слоёв и привязок `bindings`. ([zmk.dev][4])
+
+8. `https://zmk.dev/docs/keymaps/behaviors/layers`
+   Назначение: поведения управления слоями (`&mo`, `&lt`, `&to`, и др.), применяемые в текущей конфигурации. ([zmk.dev][5])
+
+9. `https://zmk.dev/docs/keymaps/conditional-layers`
+   Назначение: conditional layers (tri-layer), используемые для включения слоя `Adjust` при одновременной активности `Nav` и `Num`. ([zmk.dev][6])
+
+10. `https://zmk.dev/docs/keymaps/behaviors/hold-tap`
+    Назначение: параметры и принципы работы hold-tap/layer-tap (`&lt`, `&mt`), включая особенности определения «тап/удержание». ([zmk.dev][7])
+
+11. `https://zmk.dev/docs/keymaps/behaviors/tap-dance`
+    Назначение: документация по tap-dance, применяемому для поведения `shifty`. ([zmk.dev][8])
+
+12. `https://zmk.dev/docs/keymaps/behaviors/mouse-emulation`
+    Назначение: mouse emulation (`&mkp`, `&mmv`, `&msc`) и требования к подключению `dt-bindings/zmk/pointing.h`, используемые в слое `Mouse Layer`. ([zmk.dev][9])
+
+13. `https://zmk.dev/docs/config/pointing`
+    Назначение: конфигурация поддержки мышиных HID-событий, включая ключевой параметр `CONFIG_ZMK_POINTING`. ([zmk.dev][10])
+
+14. `https://zmk.dev/docs/keymaps/list-of-keycodes`
+    Назначение: справочник keycodes (включая сокращённые формы), используемых в `&kp ...` и смежных поведениях. ([zmk.dev][11])
+
+15. `https://zmk.dev/docs/user-setup`
+    Назначение: порядок организации репозитория пользовательской конфигурации и настройка `build.yaml` для сборки прошивок через GitHub Actions. ([zmk.dev][12])
+
+16. `https://github.com/zmkfirmware/zmk/blob/main/.github/workflows/build-user-config.yml`
+    Назначение: эталонный reusable workflow ZMK для сборки user config; используется для проверки актуальных входных параметров и механики сборки в CI. ([GitHub][13])
+
+17. `https://wiki.seeedstudio.com/XIAO_BLE/`
+    Назначение: документация производителя по Seeed Studio XIAO BLE (nRF52840), включая особенности платы, базовые процедуры работы и справочные сведения. ([wiki.seeedstudio.com][14])
+
+18. `https://nickcoutsos.github.io/keymap-layout-tools/`
+    Назначение: Keymap Layout Helper для визуальной проверки и отладки `info.json`/layout-описаний (позиции, порядок, переупорядочивание), применяемых для корректного отображения раскладки в редакторах. ([nickcoutsos.github.io][15])
+
+[1]: https://nickcoutsos.github.io/keymap-editor/?utm_source=chatgpt.com "Keymap Editor"
+[2]: https://github.com/nickcoutsos/keymap-editor/wiki/Limitations-of-the-Keymap-Editor?utm_source=chatgpt.com "Limitations of the Keymap Editor"
+[3]: https://zmk.dev/docs?utm_source=chatgpt.com "Introduction to ZMK"
+[4]: https://zmk.dev/docs/keymaps?utm_source=chatgpt.com "Keymaps & Behaviors"
+[5]: https://zmk.dev/docs/keymaps/behaviors/layers?utm_source=chatgpt.com "Layer Behaviors"
+[6]: https://zmk.dev/docs/keymaps/conditional-layers?utm_source=chatgpt.com "Conditional Layers"
+[7]: https://zmk.dev/docs/keymaps/behaviors/hold-tap?utm_source=chatgpt.com "Hold-Tap Behavior"
+[8]: https://zmk.dev/docs/keymaps/behaviors/tap-dance?utm_source=chatgpt.com "Tap-Dance Behavior"
+[9]: https://zmk.dev/docs/keymaps/behaviors/mouse-emulation?utm_source=chatgpt.com "Mouse Emulation Behaviors"
+[10]: https://zmk.dev/docs/config/pointing?utm_source=chatgpt.com "Pointing Device Configuration"
+[11]: https://zmk.dev/docs/keymaps/list-of-keycodes?utm_source=chatgpt.com "List of Keycodes"
+[12]: https://zmk.dev/docs/user-setup?utm_source=chatgpt.com "Installing ZMK"
+[13]: https://github.com/zmkfirmware/zmk/blob/main/.github/workflows/build-user-config.yml?utm_source=chatgpt.com "build-user-config.yml - zmk"
+[14]: https://wiki.seeedstudio.com/XIAO_BLE/?utm_source=chatgpt.com "Getting Started with Seeed Studio XIAO nRF52840 Series"
+[15]: https://nickcoutsos.github.io/keymap-layout-tools/?utm_source=chatgpt.com "Keymap Layout Helper"
