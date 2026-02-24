@@ -96,4 +96,10 @@ grep -RIn --exclude-dir=.git --exclude-dir=build \
 
 Также рекомендуется контролировать отсутствие устаревших/неопределённых Kconfig-символов в `config/*.conf` перед отправкой изменений.
 
+## 10 Источники
+
+https://github.com/petejohanson/revxlp-config
+https://github.com/devpew/revxlp-config
+https://nickcoutsos.github.io/keymap-editor/
+
 
