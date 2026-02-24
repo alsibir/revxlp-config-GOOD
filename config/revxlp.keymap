@@ -9,11 +9,13 @@
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/backlight.h>
 #include <dt-bindings/zmk/outputs.h>
+#include <dt-bindings/zmk/pointing.h>
 
 #define NAV_L 1
 #define NUM_L 2
 #define MED_L 3
 #define FUN_L 4
+#define MOU_L 5
 
 / {
     tap_dances {
@@ -117,7 +119,7 @@
                 &kp LSHFT       &kp Z         &kp X         &kp C         &kp V          &kp B             &kp N          &kp M          &kp COMMA      &kp DOT        &kp FSLH       &mt RALT GRAVE
 //             ╰───────────────┴─────────────┴─────────────┴─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴─────────────╯
 //                                                         ╭─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────╮
-                                                            &kp LGUI      &mo NUM_L      &lt NAV_L RET     &kp SPACE      &kp BSPC       &shifty
+                                                            &lt MOU_L LGUI  &mo NUM_L    &lt NAV_L RET     &kp SPACE      &kp BSPC       &shifty
 //                                                         ╰─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────╯
             >; 
         };
@@ -133,7 +135,7 @@
                 &kp LSHFT       &kp Z         &kp X         &kp C         &kp D          &kp V             &kp K          &kp H          &kp COMMA      &kp DOT        &kp FSLH       &mt RALT GRAVE
 //             ╰───────────────┴─────────────┴─────────────┴─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴─────────────╯
 //                                                         ╭─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────╮
-                                                            &studio_unlock &mo NUM_L     &lt NAV_L RET     &kp SPACE      &kp BSPC       &shifty
+                                                            &lt MOU_L LGUI  &mo NUM_L    &lt NAV_L RET     &kp SPACE      &kp BSPC       &shifty
 //                                                         ╰─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────╯
             >;
         };
@@ -150,7 +152,7 @@
                 &out OUT_TOG    &trans        &trans        &trans      &kp LC(LEFT_ARROW) &kp LC(RIGHT_ARROW) &kp LC(LEFT_ARROW) &kp LC(RIGHT_ARROW) &trans &trans    &trans         &out OUT_TOG
 //             ╰───────────────┴─────────────┴─────────────┴─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴─────────────╯
 //                                                         ╭─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────╮
-                                                            &kp LGUI      &mo MED_L      &trans            &trans         &trans         &trans
+                                                            &lt MOU_L LGUI  &mo NUM_L    &trans            &trans         &trans         &mo MED_L
 //                                                         ╰─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────╯
             >;
         };
@@ -166,7 +168,8 @@
                 &kp LSHFT       &kp N1        &kp KP_PLUS   &kp KP_MINUS  &kp LBRC       &kp LBKT          &kp RBKT       &kp RBRC       &kp KP_EQUAL    &kp UNDER      &trans         &trans
 //             ╰───────────────┴─────────────┴─────────────┴─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴─────────────╯
 //                                                         ╭─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────╮
-                                                            &kp LGUI      &trans         &mo MED_L         &kp KP_N1      &kp KP_N2      &kp KP_N3
+                                                      //    &kp LGUI      &trans         &mo MED_L         &kp KP_N1      &kp KP_N2      &kp KP_N3
+                                                            &lt MOU_L LGUI  &trans       &lt NAV_L RET     &kp KP_N1      &kp KP_N2      &mo MED_L
 //                                                         ╰─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────╯
             >;
         };
@@ -203,9 +206,23 @@
             >;
         };
 
-        res2 {
-            status = "reserved";
-            display-name = "New Layer";
+        mouse_layer {
+            status = "okay";
+            display-name = "Mouse Layer";
+            bindings = <
+//             ╭───────────────┬─────────────┬─────────────┬─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────┬──────────────┬──────────────┬─────────────╮
+                 &kp PG_UP       &kp HOME      &kp END        &kp PG_DN    &kp CAPS       &kp ESC          &kp LEFT_ARROW &kp UP_ARROW    &kp DOWN_ARROW &kp RIGHT_ARROW &mkp LCLK    &mkp MCLK
+//             ├───────────────┼─────────────┼─────────────┼─────────────┼──────────────┼─────────────┤   ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼─────────────┤
+                 &kp LEFT_ARROW  &kp DOWN_ARROW  &kp UP_ARROW  &kp RIGHT_ARROW &kp ENTER    &kp TAB          &mmv MOVE_LEFT &mmv MOVE_DOWN  &mmv MOVE_UP   &mmv MOVE_RIGHT &mkp RCLK    &kp PG_UP
+//             ├───────────────┼─────────────┼─────────────┼─────────────┼──────────────┼─────────────┤   ├──────────────┼──────────────┼──────────────┼──────────────┼──────────────┼─────────────┤
+                 &mkp LCLK       &mkp MCLK    &mkp RCLK     &kp C_VOL_UP   &kp C_VOL_DN   &kp C_MUTE       &msc SCRL_LEFT &msc SCRL_DOWN  &msc SCRL_UP &msc SCRL_RIGHT  &kp PG_DN     &trans
+//             ╰───────────────┴─────────────┴─────────────┴─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────┴──────────────┴──────────────┴─────────────╯
+//                                                         ╭─────────────┬──────────────┬─────────────╮   ╭──────────────┬──────────────┬──────────────╮
+                                                             &to 0        &to 0          &trans            &mkp LCLK      &mkp RCLK      &mkp MCLK
+//                                                         ╰─────────────┴──────────────┴─────────────╯   ╰──────────────┴──────────────┴──────────────╯
+     
+               
+    >;
         };
 
         res3 {
