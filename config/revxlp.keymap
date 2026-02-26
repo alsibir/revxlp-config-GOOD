@@ -131,7 +131,7 @@
         lbracket {
             timeout-ms = <COMBO_TIMEOUT_MS>;
             key-positions = <14 26>;
-            bindings = <&kp LBKT)>;
+            bindings = <&kp LBKT>;
             layers = <NUM_L>;
         };
 
