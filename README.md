@@ -96,6 +96,8 @@ grep -RIn --exclude-dir=.git --exclude-dir=build \
 
 Также рекомендуется контролировать отсутствие устаревших/неопределённых Kconfig-символов в `config/*.conf` перед отправкой изменений.
 
+**Файл combos.md соержит сведения о настройке комбинаций клавишь.**
+
 ## 10 Источники
 
 1. `https://github.com/petejohanson/revxlp-config`
