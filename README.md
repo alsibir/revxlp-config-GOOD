@@ -96,7 +96,32 @@ grep -RIn --exclude-dir=.git --exclude-dir=build \
 
 Также рекомендуется контролировать отсутствие устаревших/неопределённых Kconfig-символов в `config/*.conf` перед отправкой изменений.
 
-## 10 Файлы в корневом каталоге репозитрия для изучения раскладки revxlp
+## 10 Keymap layers (screenshots)
+
+The following screenshots are stored in the repository under `/img` and illustrate each layer.
+
+### Base (Qwerty)
+![0-qwerty_layer](img/0-qwerty_layer.png)
+
+### Base (Colemak)
+![1-colemac_layer](img/1-colemac_layer.png)
+
+### Nav
+![2-nav_layer](img/2-nav_layer.png)
+
+### Num
+![3-num_layer](img/3-num_layer.png)
+
+### Adjust
+![4-adjust_layer](img/4-adjust_layer.png)
+
+### Media
+![5-media_layer](img/5-media_layer.png)
+
+### Mouse
+![6-mouse_layer](img/6-mouse_layer.png)
+
+## 11 Файлы в корневом каталоге репозитрия для изучения раскладки revxlp
 
 1. [`howto_layers.md`](howto_layers.md)
    Назначение: сводная фиксация логики слоёв в текущей конфигурации раскладки.
@@ -134,7 +159,7 @@ grep -RIn --exclude-dir=.git --exclude-dir=build \
    * контрольные указания по проверке числа аргументов и типовых ошибок при записи привязок.
 
 
-## 11 Источники
+## 12 Источники
 
 1. `https://github.com/petejohanson/revxlp-config`
    Назначение: эталонный (референсный) репозиторий конфигурации ZMK для проекта revxlp; используется как источник примеров структуры пользовательской конфигурации, подходов к организации слоёв, биндингов и сопутствующих файлов.
