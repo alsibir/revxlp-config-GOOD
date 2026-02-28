@@ -53,6 +53,12 @@
 /* Унифицированные константы настройки combos */
 #define COMBO_TIMEOUT_MS 120
 #define COMBO_TIMEOUT_COMMAND_MS COMBO_TIMEOUT_MS
+#define COMBO_TIMEOUT_LANG_TOG_MS 2000  /* Разрешает последовательное нажатие: удержание GUI, затем Space в течение 2 с */
+
+/* Исправление: отдельные параметры для переключения раскладки (D+F, J+K) */
+#define COMBO_TIMEOUT_LANG_SEL_MS 220   /* Увеличенное окно одновременности для буквенных combo */
+#define COMBO_IDLE_LANG_SEL_MS 50       /* Сниженный порог простоя для более «живого» переключения */
+
 #define COMBO_IDLE_SYMBOL_MS 150
 #define COMBO_IDLE_COMMAND_MS 150
 #define COMBO_IDLE_DANGER_MS 250
@@ -74,7 +80,7 @@
             display-name = "Shift+";
             #binding-cells = <0>;
             tapping-term-ms = <TAP_DANCE_TERM_MS>;
-            bindings = <&kp LSHFT>, <&caps_word>;
+            bindings = <&sk LSHFT>, <&caps_word>;
         };
     };
 
@@ -251,39 +257,42 @@
         };
 
         // ---------------------------------------------------------------------
-        // Language switching combos (Base layer)
+        // Language switching combos (global)
         // ---------------------------------------------------------------------
         // Комбинации:
-        // - D + F (позиции 15 и 16 на Base) -> EN (Left Alt + Shift).
-        // - J + K (позиции 19 и 20 на Base) -> RU (Right Alt + Shift).
-        // Ограничения: включены только на базовом слое BASE_L; дополнительно применяется require-prior-idle-ms как защита от ложных срабатываний при скоростном наборе.
+        // - D + F (позиции 15 и 16) -> EN (Left Alt + Shift).
+        // - J + K (позиции 19 и 20) -> RU (Right Alt + Shift).
+        // Исправление:
+        // - combos сделаны глобальными (layers удалено), чтобы работали на любом слое;
+        // - timeout-ms увеличен до 220 мс;
+        // - require-prior-idle-ms уменьшен до 50 мс.
         combo_lang_en {
-            timeout-ms = <COMBO_TIMEOUT_COMMAND_MS>;
-            require-prior-idle-ms = <COMBO_IDLE_COMMAND_MS>;
+            timeout-ms = <COMBO_TIMEOUT_LANG_SEL_MS>;
+            require-prior-idle-ms = <COMBO_IDLE_LANG_SEL_MS>;
             key-positions = <15 16>;
-            layers = <BASE_L>;
             bindings = <&lang_en>;
         };
 
         combo_lang_ru {
-            timeout-ms = <COMBO_TIMEOUT_COMMAND_MS>;
-            require-prior-idle-ms = <COMBO_IDLE_COMMAND_MS>;
+            timeout-ms = <COMBO_TIMEOUT_LANG_SEL_MS>;
+            require-prior-idle-ms = <COMBO_IDLE_LANG_SEL_MS>;
             key-positions = <19 20>;
-            layers = <BASE_L>;
             bindings = <&lang_ru>;
         };
 
-        /* Опционально: детерминированный выбор RU/EN не обеспечивается; используется как переключатель последних двух раскладок.
-         * При необходимости включить и назначить позиции (пример ниже). */
-        /*
+        // ---------------------------------------------------------------------
+        // Language switching combo (global): GUI + Space
+        // ---------------------------------------------------------------------
+        // Назначение: переключение между двумя последними раскладками (GUI + Space) с допуском последовательного нажатия.
+        // Нажатие: удержание GUI (позиция 36), затем нажатие Space (позиция 39) в пределах 2000 мс.
+        // Ограничения: combo глобальная (без layers) — работает на любом слое.
+        // Примечание: slow-release удерживает «связку» до отпускания, снижая вероятность «провала» в одиночные действия клавиш.
         combo_lang_tog {
-            timeout-ms = <COMBO_TIMEOUT_COMMAND_MS>;
-            require-prior-idle-ms = <COMBO_IDLE_COMMAND_MS>;
-            key-positions = <21 22>;
-            layers = <BASE_L>;
+            timeout-ms = <COMBO_TIMEOUT_LANG_TOG_MS>;
+            slow-release;
+            key-positions = <36 39>;
             bindings = <&lang_tog>;
         };
-        */
     };
 
     // Для генерации прошивки с раскладкой Colemak закомментировать следующую строку (#define QWERTY_BASE); при активной директиве будет генерироваться раскладка Qwerty.
