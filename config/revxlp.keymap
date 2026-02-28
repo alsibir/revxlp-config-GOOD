@@ -10,7 +10,8 @@
  * - Слои: BASE_L (Base), NAV_L (Nav), NUM_L (Num), MED_L (Adjust, tri-layer), FUN_L (Media), MOU_L (Mouse), reserved_layer (отключён).
  * - Tri-layer: MED_L активируется при одновременной активности NUM_L и NAV_L.
  * - Combos: для слой-ограниченных combos ввода символов (NUM_L) не применяется require-prior-idle-ms; для глобальных combos применяется require-prior-idle-ms; для опасных действий применяется усиленная защита.
- * - Tap-dance: shifty (одиночное нажатие — Shift, двойное — caps_word).
+ * - Tap-dance: shifty (одиночное нажатие — sticky Shift, двойное — caps_word).
+ * - GUI + Space: реализовано без combos через sticky GUI на 2 секунды (исключает лаги на SPACE).
  */
 
 #include <behaviors.dtsi>
@@ -53,11 +54,11 @@
 /* Унифицированные константы настройки combos */
 #define COMBO_TIMEOUT_MS 120
 #define COMBO_TIMEOUT_COMMAND_MS COMBO_TIMEOUT_MS
-#define COMBO_TIMEOUT_LANG_TOG_MS 2000  /* Разрешает последовательное нажатие: удержание GUI, затем Space в течение 2 с */
 
-/* Исправление: отдельные параметры для переключения раскладки (D+F, J+K) */
-#define COMBO_TIMEOUT_LANG_SEL_MS 220   /* Увеличенное окно одновременности для буквенных combo */
-#define COMBO_IDLE_LANG_SEL_MS 50       /* Сниженный порог простоя для более «живого» переключения */
+/* Параметры combos выбора раскладки (D+F, J+K).
+ * Примечание: данные клавиши участвуют в combos; задержка одиночных нажатий ограничивается timeout-ms. */
+#define COMBO_TIMEOUT_LANG_SEL_MS 70
+#define COMBO_IDLE_LANG_SEL_MS 50
 
 #define COMBO_IDLE_SYMBOL_MS 150
 #define COMBO_IDLE_COMMAND_MS 150
@@ -71,8 +72,7 @@
     // Tap dances
     // -------------------------------------------------------------------------
     tap_dances {
-        // Нажатие: одиночное нажатие (tap) — sticky Shift (действует на следующую клавишу); двойное нажатие — caps_word.
-        // Примечание: использование sticky Shift исключает эффект «не успел примениться Shift» из-за ожидания выбора варианта tap-dance.
+        // Нажатие: одиночное нажатие (tap) — sticky Shift; двойное нажатие — caps_word.
         shifty: shift_caps_word {
             compatible = "zmk,behavior-tap-dance";
             display-name = "Shift+";
@@ -104,7 +104,7 @@
          * - GUI + Space       -> переключение между двумя последними использованными раскладками (недетерминированный выбор RU/EN).
          *
          * Примечание: прошивка ZMK отправляет только сочетания клавиш; выбор раскладки выполняется на стороне ОС.
-         * Примечание: для устойчивой регистрации сочетаний на стороне хоста модификаторы нажимаются последовательно с паузами.
+         * Примечание: для устойчивой регистрации сочетаний модификаторы нажимаются последовательно с паузами.
          */
 
         // EN: отправка Left Alt + Shift (выбор первой/английской раскладки).
@@ -112,14 +112,14 @@
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <0>;
-            tap-ms  = <40>;
+            tap-ms = <0>;
             bindings
                 = <&macro_press     &kp LALT>
-                , <&macro_wait_time 30>
+                , <&macro_wait_time 10>
                 , <&macro_press     &kp LSHFT>
-                , <&macro_wait_time 120>
+                , <&macro_wait_time 40>
                 , <&macro_release   &kp LSHFT>
-                , <&macro_wait_time 30>
+                , <&macro_wait_time 10>
                 , <&macro_release   &kp LALT>
                 ;
         };
@@ -129,29 +129,30 @@
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <0>;
-            tap-ms  = <40>;
+            tap-ms = <0>;
             bindings
                 = <&macro_press     &kp RALT>
-                , <&macro_wait_time 30>
+                , <&macro_wait_time 10>
                 , <&macro_press     &kp LSHFT>
-                , <&macro_wait_time 120>
+                , <&macro_wait_time 40>
                 , <&macro_release   &kp LSHFT>
-                , <&macro_wait_time 30>
+                , <&macro_wait_time 10>
                 , <&macro_release   &kp RALT>
                 ;
         };
 
         // TOG: отправка GUI + Space (переключение между двумя последними раскладками).
+        // Примечание: в данной редакции используется как целевое действие (может назначаться на кнопку/комбо при необходимости).
         lang_tog: lang_tog {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <0>;
-            tap-ms  = <40>;
+            tap-ms = <25>;
             bindings
                 = <&macro_press     &kp LGUI>
-                , <&macro_wait_time 30>
+                , <&macro_wait_time 10>
                 , <&macro_tap       &kp SPACE>
-                , <&macro_wait_time 30>
+                , <&macro_wait_time 10>
                 , <&macro_release   &kp LGUI>
                 ;
         };
@@ -231,7 +232,6 @@
         // ---------------------------------------------------------------------
         // Language switching combos (global)
         // ---------------------------------------------------------------------
-        // Комбинации:
         // - D + F (позиции 15 и 16) -> EN (Left Alt + Shift).
         // - J + K (позиции 19 и 20) -> RU (Right Alt + Shift).
         combo_lang_en {
@@ -248,28 +248,45 @@
             bindings = <&lang_ru>;
         };
 
-        // ---------------------------------------------------------------------
-        // Language switching combo (global): GUI + Space
-        // ---------------------------------------------------------------------
-        // Назначение: переключение между двумя последними раскладками (GUI + Space) с допуском последовательного нажатия.
-        // Нажатие: удержание GUI (позиция 36), затем нажатие Space (позиция 39) в пределах 2000 мс.
-        // Ограничения: combo глобальная (без layers) — работает на любом слое.
-        combo_lang_tog {
-            timeout-ms = <COMBO_TIMEOUT_LANG_TOG_MS>;
-            slow-release;
-            key-positions = <36 39>;
-            bindings = <&lang_tog>;
-        };
+        /* ВАЖНО:
+         * Combo для GUI + Space удалена, чтобы исключить задержку на SPACE из-за ожидания timeout-ms.
+         * GUI + Space реализовано через sticky GUI (см. behaviors и keymap).
+         */
     };
 
     // Для генерации прошивки с раскладкой Colemak закомментировать следующую строку (#define QWERTY_BASE); при активной директиве будет генерироваться раскладка Qwerty.
     #define QWERTY_BASE
 
     // -------------------------------------------------------------------------
-    // Custom behaviors (reserved)
+    // Custom behaviors
     // -------------------------------------------------------------------------
     behaviors {
-        // Резерв для пользовательских behaviors (при необходимости расширения конфигурации).
+        /* Sticky GUI на 2 секунды:
+         * - release-after-ms = 2000: окно ожидания для следующей клавиши (например, SPACE).
+         * - quick-release: снятие sticky при следующем нажатии (а не при отпускании).
+         * - lazy: активация непосредственно перед следующей клавишей (исключает «одиночное GUI» на хосте).
+         */
+        sk2s: sticky_key_2s {
+            compatible = "zmk,behavior-sticky-key";
+            #binding-cells = <1>;
+            bindings = <&kp>;
+            release-after-ms = <2000>;
+            quick-release;
+            lazy;
+        };
+
+        /* Замена &lt MOU_L LGUI:
+         * - hold: &mo (MOU_L)
+         * - tap:  &sk2s (LGUI) -> далее SPACE в пределах 2 секунд даёт GUI + SPACE без combos.
+         */
+        mou_gui: mouse_layer_sticky_gui {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <0>;
+            bindings = <&mo>, <&sk2s>;
+        };
     };
 
     // -------------------------------------------------------------------------
@@ -278,6 +295,7 @@
     keymap {
         compatible = "zmk,keymap";
 
+        // index: BASE_L (0) — Base (вариант определяется через QWERTY_BASE)
         #ifdef QWERTY_BASE
 
         qwerty_layer {
@@ -291,7 +309,7 @@
      &kp LSHFT        &kp Z            &kp X            &kp C             &kp V             &kp B                 &kp N            &kp M            &kp COMMA          &kp DOT           &kp FSLH     &mt RALT GRAVE
 // +----------------+----------------+----------------+-----------------+-----------------+-------------+       +----------------+----------------+------------------+-----------------+------------+--------------+
 //                                                    +-----------------+-----------------+-------------+       +----------------+----------------+------------------+
-                                                        &lt MOU_L LGUI    &mo NUM_L         &lt NAV_L RET         &kp SPACE        &kp BSPC         &shifty
+                                                        &mou_gui MOU_L LGUI &mo NUM_L       &lt NAV_L RET         &kp SPACE        &kp BSPC         &shifty
 //                                                    +-----------------+-----------------+-------------+       +----------------+----------------+------------------+
             >;
         };
@@ -309,13 +327,14 @@
      &kp LSHFT        &kp Z            &kp X            &kp C             &kp D             &kp V                 &kp K            &kp H            &kp COMMA          &kp DOT           &kp FSLH     &mt RALT GRAVE
 // +----------------+----------------+----------------+-----------------+-----------------+-------------+       +----------------+----------------+------------------+-----------------+------------+--------------+
 //                                                    +-----------------+-----------------+-------------+       +----------------+----------------+------------------+
-                                                        &lt MOU_L LGUI    &mo NUM_L         &lt NAV_L RET         &kp SPACE        &kp BSPC         &shifty
+                                                        &mou_gui MOU_L LGUI &mo NUM_L       &lt NAV_L RET         &kp SPACE        &kp BSPC         &shifty
 //                                                    +-----------------+-----------------+-------------+       +----------------+----------------+------------------+
             >;
         };
 
         #endif
 
+        // index: NAV_L (1)
         nav_layer {
             display-name = "Nav";
             bindings = <
@@ -327,11 +346,12 @@
      &out OUT_TOG     &trans           &trans           &trans            &kp LC(LEFT)      &kp LC(RIGHT)         &kp LC(LEFT)     &kp LC(RIGHT)    &trans             &trans            &trans      &out OUT_TOG
 // +----------------+----------------+----------------+-----------------+-----------------+-------------+       +----------------+----------------+------------------+-----------------+------------+--------------+
 //                                                    +-----------------+-----------------+-------------+       +----------------+----------------+------------------+
-                                                        &lt MOU_L LGUI    &mo NUM_L         &trans                &trans           &trans           &mo MED_L
+                                                        &mou_gui MOU_L LGUI &mo NUM_L       &trans                &trans           &trans           &mo MED_L
 //                                                    +-----------------+-----------------+-------------+       +----------------+----------------+------------------+
             >;
         };
 
+        // index: NUM_L (2)
         num_layer {
             display-name = "Num";
             bindings = <
@@ -343,11 +363,12 @@
      &kp LSHFT        &kp N1           &kp KP_PLUS      &kp KP_MINUS      &kp LBRC          &kp LBKT              &kp RBKT         &kp RBRC         &kp KP_EQUAL       &kp UNDER         &trans       &trans
 // +----------------+----------------+----------------+-----------------+-----------------+-------------+       +----------------+----------------+------------------+-----------------+------------+--------------+
 //                                                    +-----------------+-----------------+-------------+       +----------------+----------------+------------------+
-                                                        &lt MOU_L LGUI    &trans            &lt NAV_L RET         &kp KP_N1        &kp KP_N2        &mo MED_L
+                                                        &mou_gui MOU_L LGUI &trans          &lt NAV_L RET         &kp KP_N1        &kp KP_N2        &mo MED_L
 //                                                    +-----------------+-----------------+-------------+       +----------------+----------------+------------------+
             >;
         };
 
+        // index: MED_L (3)
         adjust_layer {
             display-name = "Adjust";
             bindings = <
@@ -364,6 +385,7 @@
             >;
         };
 
+        // index: FUN_L (4)
         media_layer {
             display-name = "Media";
             bindings = <
@@ -380,6 +402,7 @@
             >;
         };
 
+        // index: MOU_L (5)
         mouse_layer {
             display-name = "Mouse";
             bindings = <
@@ -397,9 +420,11 @@
             >;
         };
 
+        // index: reserved (отключён)
         reserved_layer {
             status = "disabled";
             display-name = "Reserved";
+            // Примечание: для временной активации при отладке установить status = "okay" и назначить &mo/&to на нужную позицию.
         };
     };
 };
