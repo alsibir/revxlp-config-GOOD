@@ -71,10 +71,8 @@
     // Tap dances
     // -------------------------------------------------------------------------
     tap_dances {
-        // Нажатие: одиночное нажатие (tap) в пределах 150 мс — выполняется LSHFT; двойное нажатие (double-tap) в пределах 150 мс — включается режим caps_word.
-        // Результат: при tap действует как левый Shift, при double-tap включается Caps Word (заглавные буквы до условия завершения режима).
-        // Ограничения: применяется только там, где поведение shifty назначено в keymap; окно распознавания задаётся tapping-term-ms.
-        // Настройка: при пропусках double-tap рекомендуется увеличить tapping-term-ms (например, до 180–220 мс); при ложных double-tap — уменьшать шагом 10–20 мс.
+        // Нажатие: одиночное нажатие (tap) — sticky Shift (действует на следующую клавишу); двойное нажатие — caps_word.
+        // Примечание: использование sticky Shift исключает эффект «не успел примениться Shift» из-за ожидания выбора варианта tap-dance.
         shifty: shift_caps_word {
             compatible = "zmk,behavior-tap-dance";
             display-name = "Shift+";
@@ -90,10 +88,6 @@
     cond_layers {
         compatible = "zmk,conditional-layers";
 
-        // Условие: одновременная активность слоёв NUM_L и NAV_L.
-        // Результат: автоматически активируется слой MED_L (tri-layer), пока выполняется условие.
-        // Ограничения: MED_L является производным (условным) слоем; прекращает быть активным при выключении любого из слоёв NUM_L или NAV_L.
-        // Диагностика: при нестабильном включении MED_L требуется проверить, что NUM_L и NAV_L реально удерживаются как активные слои (а не срабатывают как tap), и при необходимости унифицировать механику удержания (например, &mo для обоих слоёв).
         tri {
             if-layers = <NUM_L NAV_L>;
             then-layer = <MED_L>;
@@ -110,17 +104,19 @@
          * - GUI + Space       -> переключение между двумя последними использованными раскладками (недетерминированный выбор RU/EN).
          *
          * Примечание: прошивка ZMK отправляет только сочетания клавиш; выбор раскладки выполняется на стороне ОС.
+         * Примечание: для устойчивой обработки сочетаний (особенно по BLE) применены ненулевые задержки и явная пауза между press/release.
          */
 
         // EN: отправка Left Alt + Shift (выбор первой/английской раскладки).
         lang_en: lang_en {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <0>;
-            tap-ms = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
             bindings
-                = <&macro_press   &kp LALT &kp LSHFT>
-                , <&macro_release &kp LSHFT &kp LALT>
+                = <&macro_press     &kp LALT &kp LSHFT>
+                , <&macro_wait_time 80>
+                , <&macro_release   &kp LSHFT &kp LALT>
                 ;
         };
 
@@ -128,11 +124,12 @@
         lang_ru: lang_ru {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <0>;
-            tap-ms = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
             bindings
-                = <&macro_press   &kp RALT &kp LSHFT>
-                , <&macro_release &kp LSHFT &kp RALT>
+                = <&macro_press     &kp RALT &kp LSHFT>
+                , <&macro_wait_time 80>
+                , <&macro_release   &kp LSHFT &kp RALT>
                 ;
         };
 
@@ -140,12 +137,14 @@
         lang_tog: lang_tog {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <0>;
-            tap-ms = <0>;
+            wait-ms = <40>;
+            tap-ms = <40>;
             bindings
-                = <&macro_press   &kp LGUI>
-                , <&macro_tap     &kp SPACE>
-                , <&macro_release &kp LGUI>
+                = <&macro_press     &kp LGUI>
+                , <&macro_wait_time 80>
+                , <&macro_tap       &kp SPACE>
+                , <&macro_wait_time 80>
+                , <&macro_release   &kp LGUI>
                 ;
         };
     };
@@ -156,16 +155,6 @@
     combos {
         compatible = "zmk,combos";
 
-        // Принцип настройки:
-        // - для слой-ограниченных combos ввода символов (например, NUM_L) обычно не применяется require-prior-idle-ms, чтобы не ухудшать потоковый ввод;
-        // - для глобальных combos (без layers) применяется require-prior-idle-ms как защита от ложных срабатываний;
-        // - для опасных действий (например, &bootloader) применяется усиленная защита (COMBO_IDLE_DANGER_MS).
-        // Примечание: require-prior-idle-ms блокирует combo при активном наборе без паузы; в этом случае отправляются обычные нажатия.
-        // Примечание: пересечения combos по key-positions рекомендуется вводить только при явном обосновании и с обязательной проверкой приоритетов.
-
-        // Нажатие: одновременное W + S (позиции 2 и 14) в пределах 120 мс.
-        // Результат: символ "{" (Shift + [).
-        // Ограничения: работает только при активном слое NUM_L; при активных NUM_L и NAV_L одновременно дополнительно активируется MED_L, однако combo остаётся привязанной к NUM_L.
         l_curly_bracket {
             timeout-ms = <COMBO_TIMEOUT_MS>;
             key-positions = <2 14>;
@@ -173,9 +162,6 @@
             layers = <NUM_L>;
         };
 
-        // Нажатие: одновременное R + F (позиции 4 и 16) в пределах 120 мс.
-        // Результат: символ "}" (Shift + ]).
-        // Ограничения: работает только при активном слое NUM_L; при активных NUM_L и NAV_L одновременно дополнительно активируется MED_L, однако combo остаётся привязанной к NUM_L.
         r_curly_bracket {
             timeout-ms = <COMBO_TIMEOUT_MS>;
             key-positions = <4 16>;
@@ -183,9 +169,6 @@
             layers = <NUM_L>;
         };
 
-        // Нажатие: одновременное S + X (позиции 14 и 26) в пределах 120 мс.
-        // Результат: символ "[".
-        // Ограничения: работает только при активном слое NUM_L; при активных NUM_L и NAV_L одновременно дополнительно активируется MED_L, однако combo остаётся привязанной к NUM_L.
         lbracket {
             timeout-ms = <COMBO_TIMEOUT_MS>;
             key-positions = <14 26>;
@@ -193,9 +176,6 @@
             layers = <NUM_L>;
         };
 
-        // Нажатие: одновременное F + V (позиции 16 и 28) в пределах 120 мс.
-        // Результат: символ "]".
-        // Ограничения: работает только при активном слое NUM_L; при активных NUM_L и NAV_L одновременно дополнительно активируется MED_L, однако combo остаётся привязанной к NUM_L.
         rbracket {
             timeout-ms = <COMBO_TIMEOUT_MS>;
             key-positions = <16 28>;
@@ -203,54 +183,38 @@
             layers = <NUM_L>;
         };
 
-        // Нажатие: одновременное L + DOT (позиции 21 и 33) в пределах 120 мс.
-        // Результат: символ "?" (Shift + /).
-        // Ограничения: глобальная combo; дополнительно требуется простой ввода не менее 150 мс перед началом combo (защита от ложных срабатываний при скоростном наборе).
         ques_mark_combo {
             timeout-ms = <COMBO_TIMEOUT_MS>;
-            require-prior-idle-ms = <COMBO_IDLE_SYMBOL_MS>; // Защита от ложных срабатываний: combo блокируется, если перед началом в последние 150 мс выполнялся обычный ввод.
+            require-prior-idle-ms = <COMBO_IDLE_SYMBOL_MS>;
             key-positions = <21 33>;
             bindings = <&kp LS(FSLH)>;
         };
 
-        // Нажатие: одновременное P + SEMI (позиции 10 и 22) в пределах 120 мс.
-        // Результат: символ "\".
-        // Ограничения: глобальная combo; дополнительно требуется простой ввода не менее 150 мс перед началом combo (защита от ложных срабатываний при скоростном наборе).
         bslash_combo {
             timeout-ms = <COMBO_TIMEOUT_MS>;
-            require-prior-idle-ms = <COMBO_IDLE_SYMBOL_MS>; // Защита от ложных срабатываний: combo блокируется, если перед началом в последние 150 мс выполнялся обычный ввод.
+            require-prior-idle-ms = <COMBO_IDLE_SYMBOL_MS>;
             key-positions = <10 22>;
             bindings = <&kp BSLH>;
         };
 
-        // Нажатие: одновременное SEMI + FSLH (позиции 22 и 34) в пределах 120 мс.
-        // Результат: символ "/".
-        // Ограничения: глобальная combo; дополнительно требуется простой ввода не менее 150 мс перед началом combo (защита от ложных срабатываний при скоростном наборе).
         fslash_combo {
             timeout-ms = <COMBO_TIMEOUT_MS>;
-            require-prior-idle-ms = <COMBO_IDLE_SYMBOL_MS>; // Защита от ложных срабатываний: combo блокируется, если перед началом в последние 150 мс выполнялся обычный ввод.
+            require-prior-idle-ms = <COMBO_IDLE_SYMBOL_MS>;
             key-positions = <22 34>;
             bindings = <&kp FSLH>;
         };
 
-        // Нажатие: одновременное T + Y (позиции 5 и 6) в пределах 120 мс.
-        // Результат: переход в режим загрузчика (&bootloader).
-        // Ограничения: работает только при активном слое MED_L; дополнительно требуется простой ввода не менее 250 мс перед началом combo (усиленная защита от случайного срабатывания).
         bootloader_combo {
             timeout-ms = <COMBO_TIMEOUT_COMMAND_MS>;
-            require-prior-idle-ms = <COMBO_IDLE_DANGER_MS>; // Усиленная защита: действие загрузчика блокируется при отсутствии простоя 250 мс перед началом combo.
-            // slow-release; // При необходимости усиления стабильности удерживаемых combos (как правило, для &bootloader не требуется).
+            require-prior-idle-ms = <COMBO_IDLE_DANGER_MS>;
             key-positions = <5 6>;
             bindings = <&bootloader>;
             layers = <MED_L>;
         };
 
-        // Нажатие: одновременное F + J (позиции 16 и 19) в пределах 120 мс.
-        // Результат: нажатие модификатора GUI/Windows/Command (LGUI).
-        // Ограничения: работает только при активном слое MED_L; дополнительно требуется простой ввода не менее 150 мс перед началом combo (защита от ложных срабатываний при скоростном наборе).
         gui_combo {
             timeout-ms = <COMBO_TIMEOUT_COMMAND_MS>;
-            require-prior-idle-ms = <COMBO_IDLE_COMMAND_MS>; // Защита от ложных срабатываний: модификатор GUI блокируется при отсутствии простоя 150 мс перед началом combo.
+            require-prior-idle-ms = <COMBO_IDLE_COMMAND_MS>;
             key-positions = <16 19>;
             bindings = <&kp LGUI>;
             layers = <MED_L>;
@@ -286,7 +250,6 @@
         // Назначение: переключение между двумя последними раскладками (GUI + Space) с допуском последовательного нажатия.
         // Нажатие: удержание GUI (позиция 36), затем нажатие Space (позиция 39) в пределах 2000 мс.
         // Ограничения: combo глобальная (без layers) — работает на любом слое.
-        // Примечание: slow-release удерживает «связку» до отпускания, снижая вероятность «провала» в одиночные действия клавиш.
         combo_lang_tog {
             timeout-ms = <COMBO_TIMEOUT_LANG_TOG_MS>;
             slow-release;
@@ -311,9 +274,6 @@
     keymap {
         compatible = "zmk,keymap";
 
-        // Примечание: при расширении слоёв рекомендуется выполнять аудит &trans в критичных позициях, чтобы исключить непреднамеренное наследование базовых действий на служебных слоях.
-
-        // index: BASE_L (0) — Base (вариант определяется через QWERTY_BASE)
         #ifdef QWERTY_BASE
 
         qwerty_layer {
@@ -352,7 +312,6 @@
 
         #endif
 
-        // index: NAV_L (1)
         nav_layer {
             display-name = "Nav";
             bindings = <
@@ -369,7 +328,6 @@
             >;
         };
 
-        // index: NUM_L (2)
         num_layer {
             display-name = "Num";
             bindings = <
@@ -386,7 +344,6 @@
             >;
         };
 
-        // index: MED_L (3)
         adjust_layer {
             display-name = "Adjust";
             bindings = <
@@ -403,7 +360,6 @@
             >;
         };
 
-        // index: FUN_L (4)
         media_layer {
             display-name = "Media";
             bindings = <
@@ -420,7 +376,6 @@
             >;
         };
 
-        // index: MOU_L (5)
         mouse_layer {
             display-name = "Mouse";
             bindings = <
@@ -438,11 +393,9 @@
             >;
         };
 
-        // index: reserved (отключён)
         reserved_layer {
             status = "disabled";
             display-name = "Reserved";
-            // Примечание: для временной активации при отладке установить status = "okay" и назначить &mo/&to на нужную позицию.
         };
     };
 };
