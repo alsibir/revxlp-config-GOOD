@@ -9,7 +9,7 @@
 /* Краткое описание конфигурации:
  * - Слои: BASE_L (Base), NAV_L (Nav), NUM_L (Num), MED_L (Adjust, tri-layer), FUN_L (Media), MOU_L (Mouse), reserved_layer (отключён).
  * - Tri-layer: MED_L активируется при одновременной активности NUM_L и NAV_L.
- * - Tap-dance: shifty (одиночное нажатие — sticky Shift, двойное — caps_word).
+ * - shifty (Тамб-6): tap-dance: 1 нажатие — sticky Shift, 2 нажатия — caps word.
  * - Переключение раскладки по D+F / J+K на базовом слое: отправка хоткеев ОС Alt+LShift (EN) / Alt+RShift (RU).
  * - GUI + Space реализовано без combos через sticky GUI на 2 секунды (исключает лаги на SPACE).
  *
@@ -59,7 +59,9 @@
 /* Унифицированные константы для tap-dance */
 #define TAP_DANCE_TERM_MS 150
 
-/* Позиции клавиш для combos переключения раскладки (зависят от выбранной базовой раскладки). */
+/* Позиции клавиш для combos переключения раскладки (зависят от выбранной базовой раскладки).
+ * Примечание: combos в ZMK задаются физическими позициями, а не символами.
+ */
 #ifdef QWERTY_BASE
 #define COMBO_LANG_EN_POS 15 16
 #define COMBO_LANG_RU_POS 19 20
@@ -69,19 +71,6 @@
 #endif
 
 / {
-    // -------------------------------------------------------------------------
-    // Tap dances
-    // -------------------------------------------------------------------------
-    tap_dances {
-        shifty: shift_caps_word {
-            compatible = "zmk,behavior-tap-dance";
-            display-name = "Shift+";
-            #binding-cells = <0>;
-            tapping-term-ms = <TAP_DANCE_TERM_MS>;
-            bindings = <&sk LSHFT>, <&caps_word>;
-        };
-    };
-
     // -------------------------------------------------------------------------
     // Conditional layers (tri-layer)
     // -------------------------------------------------------------------------
@@ -112,7 +101,12 @@
                 ;
         };
 
-        /* Переключение раскладки через хоткеи ОС. */
+        /* Переключение раскладки через хоткеи ОС:
+         * - EN: Alt + Left Shift
+         * - RU: Alt + Right Shift
+         *
+         * Примечание: при необходимости допускается замена LALT на RALT в соответствии с настройками ОС.
+         */
         lang_en_os: lang_en_os {
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
@@ -216,6 +210,8 @@
         // ---------------------------------------------------------------------
         // Language switching combos (Base layer): D+F / J+K
         // ---------------------------------------------------------------------
+        // D + F -> Alt + Left Shift (EN)
+        // J + K -> Alt + Right Shift (RU)
         combo_lang_en {
             timeout-ms = <COMBO_TIMEOUT_LANG_SEL_MS>;
             require-prior-idle-ms = <COMBO_IDLE_LANG_SEL_MS>;
@@ -231,12 +227,30 @@
             layers = <BASE_L>;
             bindings = <&lang_ru_os>;
         };
+
+        /* ВАЖНО: combo для GUI + Space не применяется, чтобы исключить задержку SPACE. */
     };
 
     // -------------------------------------------------------------------------
     // Custom behaviors
     // -------------------------------------------------------------------------
     behaviors {
+        /* shifty (Тамб-6): tap-dance.
+         * - 1 нажатие: sticky Left Shift (действует на следующую клавишу).
+         * - 2 нажатия: caps word (заглавные буквы до завершения режимом).
+         * Требование к темпу: двойное нажатие выполнить в пределах TAP_DANCE_TERM_MS.
+         */
+        shifty: shifty {
+            compatible = "zmk,behavior-tap-dance";
+            label = "SHIFTY";
+            #binding-cells = <0>;
+            tapping-term-ms = <TAP_DANCE_TERM_MS>;
+            bindings = <&sk LSHFT>, <&caps_word>;
+        };
+
+        /* Sticky GUI на 2 секунды:
+         * - lazy исключает отправку «одиночного GUI» на хост до нажатия следующей клавиши.
+         */
         sk2s: sticky_key_2s {
             compatible = "zmk,behavior-sticky-key";
             #binding-cells = <1>;
